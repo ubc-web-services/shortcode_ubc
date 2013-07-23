@@ -1,4 +1,4 @@
 shortcodes
 ==========
 
-A fre basic shortcodes for Drupal
+A few basic shortcodes for Drupal
