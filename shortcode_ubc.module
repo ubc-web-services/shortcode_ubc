@@ -7,6 +7,7 @@
 function shortcode_ubc_preprocess_page(&$variables) {
   $path = drupal_get_path('module', 'shortcode_ubc');
   drupal_add_css($path . '/css/shortcodestyles.css', array('group' => CSS_DEFAULT));
+  drupal_add_js($path . '/js/shortcode_ubc.js');
 }
 
 /**
