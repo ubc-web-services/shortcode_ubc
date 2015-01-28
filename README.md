@@ -1,15 +1,15 @@
-UBC ClF Drupal "shortcodes"
-=============================
+## UBC ClF Drupal "shortcodes"
+
 
 A few basic shortcodes to use with Megatron CLF in Drupal.
 
 There are 3 shortcode options:
- -- Accordion
- -- Tabbed Content
- -- Columns
+ * Accordion
+ * Tabbed Content
+ * Columns
 
- Accordion
- ========
+### Accordion:<br>
+
 
  Shortcode for accordions use:<br>
             [accordion title="Your Accordion Title"]Your content here[/accordion]<br>
@@ -17,8 +17,7 @@ There are 3 shortcode options:
              E.g. [accordion title="Open Accordion" expanded="1"]Content and text in here. [/accordion]
 
 
-Tabbed Content:
-==============
+### Tabbed Content:
 
 Shortcode for tabbed content use:<br>
      [tabs]<br>
@@ -27,8 +26,7 @@ Shortcode for tabbed content use:<br>
      [/tabs]
 
 
- Columns:
- =========
+### Columns:
 
  Shortcode for putting content into columns use:<br>
          [columns]<br>
