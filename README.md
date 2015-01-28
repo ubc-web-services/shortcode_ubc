@@ -1,4 +1,4 @@
-## UBC ClF Drupal "shortcodes"
+## UBC CLF Drupal "shortcodes"
 
 
 A few basic shortcodes to use with Megatron CLF in Drupal.
