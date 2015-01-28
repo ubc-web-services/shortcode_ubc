@@ -1,6 +1,6 @@
 name = Shortcodes - UBC IT
 description = Provides Accordion and Column shortcode tags.
-package = UBC IT
+package = UBC IT Web Services
 core = 7.x
 dependencies[] = filter
 dependencies[] = shortcode
