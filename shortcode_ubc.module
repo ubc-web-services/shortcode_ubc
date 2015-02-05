@@ -6,7 +6,7 @@
  */
 function shortcode_ubc_preprocess_page(&$variables) {
   $path = drupal_get_path('module', 'shortcode_ubc');
-  drupal_add_css($path . '/css/shortcodestyles.css', array('group' => CSS_DEFAULT));
+  //drupal_add_css($path . '/css/shortcodestyles.css', array('group' => CSS_DEFAULT));
   drupal_add_js($path . '/js/shortcode_ubc.js');
 }
 
@@ -17,7 +17,7 @@ function shortcode_ubc_preprocess_page(&$variables) {
 function shortcode_ubc_shortcode_info() {
   $shortcodes = array();
 
-  $shortcodes['col'] = array(
+  $shortcodes['columns'] = array(
     'title' => t('Columns'),
     'description' => t('Simple columns in content'),
     'process callback' => 'shortcode_ubc_columns',
@@ -26,153 +26,49 @@ function shortcode_ubc_shortcode_info() {
     'attributes callback' => 'shortcode_ubc_columns_attributes',
   );
 
-  $shortcodes['toggle'] = array(
-    'title' => t('Toggle'),
-    'description' => t('JQuery toggle content'),
-    'process callback' => 'shortcode_ubc_toggle',
-    'tips callback' => 'shortcode_ubc_toggle_tips',
+    $shortcodes['column-item'] = array(
+        'title' => t('Column Item'),
+        'description' => t('Individual column item. Required for Columns.'),
+        'process callback' => 'shortcode_ubc_column_item',
+        'default settings' => array(),
+        'attributes callback' => 'shortcode_ubc_column_item_attributes',
+    );
+
+  $shortcodes['accordion'] = array(
+    'title' => t('Accordion'),
+    'description' => t('JQuery toggle accordion content'),
+    'process callback' => 'shortcode_ubc_accordion',
+    'tips callback' => 'shortcode_ubc_accordion_tips',
     'default settings' => array(),
-    'attributes callback' => 'shortcode_ubc_toggle_attributes',
+    'attributes callback' => 'shortcode_ubc_accordion_attributes',
   );
 
- /*$shortcodes['tabs'] = array(
-   'title' => t('Tabs & Accordions'),
-   'description' => t('JQuery toggle content'),
-   'process callback' => 'shortcode_ubc_tabs',
-   'tips callback' => 'shortcode_ubc_tabs_tips',
-   'default settings' => array(),
- );
+    $shortcodes['tabs'] = array(
+        'title' => t('Tabbed Content'),
+        'description' => t('JQuery tabbed content'),
+        'process callback' => 'shortcode_ubc_tabs',
+        'tips callback' => 'shortcode_ubc_tabs_tips',
+        'default settings' => array(),
 
- $shortcodes['tab-item'] = array(
-   'title' => t('Tabs pane'),
-   'description' => t('converts inner contents to a tab.'),
-   'process callback' => 'shortcode_ubc_tab_item',
-   'tips callback' => 'shortcode_ubc_tab_item_tips',
-   'default settings' => array(),
- );*/
+    );
+
+    $shortcodes['tab-item'] = array(
+        'title' => t('Tabs pane'),
+        'description' => t('Converts inner contents to a tab. Required for Tabbed Content.'),
+        'process callback' => 'shortcode_ubc_tab_item',
+        'default settings' => array(),
+        'attributes callback' => 'shortcode_ubc_tab_item_attributes',
+    );
+
 
   return $shortcodes;
 }
-
-/** @file shortcodes.php
- *
- * Shortcode definitions
- */
-
-
-
-/*============================================================================================*/
-/* Columns
-/*============================================================================================*/
-function shortcode_ubc_columns( $attrs, $content = null ) {
-  extract(shortcode_attrs(array(
-  'width'      => '',
-  'align'      => '',
-  'last'       => '',
-  'clear'      => '',
-  'class'      => '',
-  ), $attrs));
-
-  $classes = array();
-  if ($last) $classes[] = 'col-last';
-  if ($width) $classes[] = 'col-' . $width;
-  if ($align == 'right') $classes[] = 'float-right';
-  if ($align == 'center') $classes[] = 'align-center';
-  if ($clear) $classes[] = 'clear-both';
-
-  $classes = trim(implode(' ', $classes));
-
-  return '<div class="' . $classes . '">' . $content . '</div>';
-}
-
-/**
- * Columns
- */
-
-function shortcode_ubc_columns_tips($format, $long) {
-  $output = '[col width="1-2"]First Column Text[/col][col width="1-2" last=1]Second Column Text[/col]';
-  return $output;
-}
-
-function shortcode_ubc_columns_attributes($form, $form_state) {
-  $form['width'] = array(
-    '#type' => 'select',
-    '#title' => t('Column width'),
-    '#options' => array(
-      '' => t('Auto'),
-      '1-8' => t('1/8'),
-      '1-7' => t('1/7'),
-      '1-6' => t('1/6'),
-      '1-5' => t('1/5'),
-      '1-4' => t('1/4'),
-      '1-3' => t('1/3'),
-      '1-2' => t('1/2'),
-      '2-3' => t('2/3'),
-      '3-4' => t('3/4'),
-      '2-5' => t('2/5'),
-      '3-5' => t('3/5'),
-      '4-5' => t('4/5'),
-      '5-6' => t('5/6'),
-    ),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="shortcode"]' => array('value' => 'col'),
-      ),
-    ),
-  );
-  $form['align'] = array(
-    '#type' => 'select',
-    '#title' => t('Alignment of element'),
-    '#options' => array(
-      '' => t('Left'),
-      'right' => t('Right'),
-      'center' => t('Center'),
-    ),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="shortcode"]' => array('value' => 'col'),
-      ),
-    ),
-  );
-  $form['clear'] = array(
-    '#type' => 'select',
-    '#title' => t('Float clearing'),
-    '#options' => array(
-      '' => t('None'),
-      'clear-both' => t('Clear both'),
-      'clear-left' => t('Clear left'),
-      'clear-right' => t('Clear right'),
-    ),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="shortcode"]' => array('value' => 'col'),
-      ),
-    ),
-  );
-  $form['last'] = array(
-    '#type' => 'select',
-    '#title' => t('Last column in row'),
-    '#description' => t('If this columns is last in a row you need to check this'),
-    '#options' => array(
-      '' => 'No',
-      1 => t('Last in row'),
-    ),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="shortcode"]' => array('value' => 'col'),
-      ),
-    ),
-  );
-  return $form;
-}
-
-
 
 
 /*============================================================================================*/
 /* Jquery toggle content Shortcode
 /*============================================================================================*/
-function shortcode_ubc_toggle( $attrs, $content = null ) {
+function shortcode_ubc_accordion( $attrs, $content = null ) {
   extract(shortcode_attrs(array(
   'title'      => '',
   'expanded'      => FALSE,
@@ -182,18 +78,12 @@ function shortcode_ubc_toggle( $attrs, $content = null ) {
   $classes = array();
   if ($expanded) {
     $classes[] = 'default';
-    //$collapsed[] = ' ';
   }
   else {
     $classes[] = '';
-    //$collapsed[] = ' default-collapsed';
   }
 
   $classes = implode(' ', $classes);
-
- /* $out =  '<div class="toggle' . $collapsed . '"><h3 class="' . $classes . '" onclick="$(this).toggleClass(\'expanded\').next().toggle(\'fast\');" ><a href="##">' . $title . '</a></h3>';
-  $out .= '<div class="toggle-content clearfix">' . $content . '</div>';
-  $out .= '</div>';*/
 	
 	
   $out =  '<div class="accordion"><div class="accordion-tab" tabindex="0">' . $title . '</div>';
@@ -204,12 +94,14 @@ function shortcode_ubc_toggle( $attrs, $content = null ) {
 }
 
 
-function shortcode_ubc_toggle_tips($format, $long) {
-  $output = '[toggle title="Your Accordion Title"]Your content here[/toggle] (to make open by default, add "expanded=1" to the opening toggle)';
+function shortcode_ubc_accordion_tips($format, $long) {
+  $output = 'Shortcode for accordions use:<br>[accordion title="Your Accordion Title"]Your content here[/accordion]<br>
+            To make open by default, add "expanded=1" to the accordion you want open:
+            E.g. [accordion title="Open Accordion" expanded="1"]Content and text in here. [/accordion]';
   return $output;
 }
 
-function shortcode_ubc_toggle_attributes($form, $form_state) {
+function shortcode_ubc_accordion_attributes($form, $form_state) {
   $form['expanded'] = array(
     '#type' => 'select',
     '#title' => t('Collapsed / Expanded'),
@@ -219,7 +111,7 @@ function shortcode_ubc_toggle_attributes($form, $form_state) {
     ),
     '#states' => array(
       'visible' => array(
-        ':input[name="shortcode"]' => array('value' => 'toggle'),
+        ':input[name="shortcode"]' => array('value' => 'accordion'),
       ),
     ),
   );
@@ -231,77 +123,172 @@ function shortcode_ubc_toggle_attributes($form, $form_state) {
     '#maxlength' => 60,
     '#states' => array(
       'visible' => array(
-        ':input[name="shortcode"]' => array('value' => 'toggle'),
+        ':input[name="shortcode"]' => array('value' => 'accordion'),
       ),
     ),
   );
   return $form;
 }
 
+/*============================================================================================*/
+/* Jquery Tabbed Content Shortcode
+/*============================================================================================*/
 
-// Quicktabs implementation is currently now working well because I don't know how to populate
-// Drupal.settings.quicktabs in a way that works well with caching.
+function shortcode_ubc_tabs($attrs, $content = NULL){
 
-// /*============================================================================================*/
-// /* Jquery toggle content Shortcode
-// /*============================================================================================*/
-/*function shortcode_ubc_tabs( $attrs, $content = null ) {
-  extract(shortcode_attrs(array(
-  'type'      => '',
-  ), $attrs));
+    $tabbed_content = &drupal_static('tabbed_content', array());
 
-  if (!function_exists('quicktabs_build_quicktabs')) {
-     drupal_set_message(t('You must enable the quicktabs module to use the tabs shortcode'), 'error');
-    return;
-   }
+    $output = '<div class="tab-wrapper">';
+    if(!empty($tabbed_content)){
+        $output .= '<ul class="tabs">';
+        $num = 0;
+        foreach ($tabbed_content as $id => $title) {
+            $class = '';
+            if($num == 0){
+                $class = 'class="active"';
+            }
+            $output .= '<li '.$class.' rel="'.$id.'">'.$title.'</li>';
+            $num++;
+        }
+        $output .= '</ul>';
 
-  if (($type == 'accordion' OR $type == 'accordeon')) {
-     $settings = array(
-       'renderer' => 'accordion',
-       'options' => array (
-         'history' => 0,
-         'jquery_ui' => array(
-           'autoHeight' => 0,
-           'collapsible' => 0,
+    }
+    $output .= '<div class="tab_container">';
+    $output .= $content;
+    $output .= '</div></div>';
+
+    drupal_static_reset('tabbed_content');
+    return $output;
+
+}
+
+/**
+ * @param $attrs
+ * @param null $content
+ * @return string
+ */
+function shortcode_ubc_tab_item($attrs, $content = NULL){
+    extract(shortcode_attrs(array(
+        'position'      => 0,
+        'title' => '',
+    ), $attrs));
+
+    $id = "tab$position";
+
+    $tabbed_content = &drupal_static('tabbed_content');
+
+    $tabbed_content[$id] = $title;
+
+    $output = '<h5 class="tab_drawer_heading" rel="'.$id.'">'.$title.'</h5>';
+    $output .= '<div id="'.$id.'" class="tab_content">';
+    $output .= "<p>$content</p>";
+    $output .= '</div>';
+
+    return $output;
+}
+
+
+function shortcode_ubc_tabs_tips($format, $long) {
+    $output = 'Shortcode for tabbed content use:<br>[tabs]<br>
+        [tab-item position="1" title="Your tab title"]Your content[/tab-item]<br>
+        [tab-item position="2" title="Next tab title"]Next content[/tab-item]<br>
+        [/tabs]';
+    return $output;
+}
+
+function shortcode_ubc_tab_item_attributes($form, $form_state) {
+
+    $form['title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Title'),
+        '#description' => t('Must be a valid CSS color.'),
+        '#size' => 60,
+        '#maxlength' => 60,
+        '#states' => array(
+            'visible' => array(
+                ':input[name="shortcode"]' => array('value' => 'tabs'),
+            ),
         ),
-      ),
-     );
-   } else {
-     $settings = array();
-   }
-
-   global $shortcode_tabs_stack;
-   $output = drupal_render(quicktabs_build_quicktabs(rand(), $settings, $shortcode_tabs_stack));
-   $shortcode_tabs_stack = null;
-   return $output;
- }
- function shortcode_ubc_tabs_tips($format, $long) {
-   $output = '[tabs][tab-item title="Your title"]Your content[/tab-item][tab-item title="Next title"]Next content[/tab-item][/tabs]';
-   return $output;
- }
- 
- 
- function shortcode_ubc_tab_item( $attrs, $content = null ) {
-   extract(shortcode_attrs(array(
-   'title'      => '',
-  ), $attrs));
-
-//   // Unfortunately there is currently no other way to pass arguments to the
-//   // tabs function #lame
-   global $shortcode_tabs_stack;
-   if (!is_array($shortcode_tabs_stack)) $shortcode_tabs_stack = array();
-   $pane = array(
-     'title' => $title,
-     'contents' => array(
-       '#markup' => $content,
-     ),
-     'weight' => count($shortcode_tabs_stack),
-   );
-   $shortcode_tabs_stack[] = $pane;
- }
+    );
+    $form['position'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Tab Position'),
+        '#description' => t('Must be a numeric value less than 10 (e.g. 1-9)'),
+        '#size' => 1,
+        '#maxlength' => 1,
+        '#states' => array(
+            'visible' => array(
+                ':input[name="shortcode"]' => array('value' => 'tabs'),
+            ),
+        ),
+    );
 
 
- function shortcode_ubc_tabs_item_tips($format, $long) {
-   $output = '[tabs type=accordion][tab-item title="Your title"]Your content[/tab-item][tab-item title="Next title"]Next content[/tab-item][/tabs]';
-   return $output;
- }*/
+    return $form;
+}
+
+/*============================================================================================*/
+/* CLF Content in Columns
+/*============================================================================================*/
+
+function shortcode_ubc_columns($attrs, $content = NULL){
+
+    $output = '<div class="clearfix">';
+    $output .= $content;
+    $output .= '</div>';
+
+    return $output;
+
+}
+
+function shortcode_ubc_columns_tips($format, $long) {
+    $output = 'Shortcode for putting content into columns use:<br>
+        [columns]<br>
+        [column-item width="1-quarter"]First column content[/column-item]<br>
+        [column-item width="1-half"]Fatter middle content[/column-item]<br>
+        [column-item width="1-quarter"]Third and last column[/column-item]<br>
+        [/columns]<br>
+        Note: width options are 1-half, 1-third, 2-third, 1-quarter, 3-quarter to represent 1/2, 1/3, 2/3, 1/4 and 3/4 respectively.';
+    return $output;
+}
+
+function shortcode_ubc_column_item($attrs, $content = NULL){
+
+    extract(shortcode_attrs(array(
+        'width' => '',
+    ), $attrs));
+
+    $width_classes = array( '1-half' => 'span6',
+                            '1-third' => 'span4',
+                            '2-third' => 'span8',
+                            '1-quarter' => 'span3',
+                            '3-quarter' => 'span9',
+                            );
+
+
+   // $tabbed_content[$id] = $width;
+
+    $output = '<div class="'.$width_classes[$width].'">'.$content.'</div>';
+
+    return $output;
+
+}
+
+function shortcode_ubc_column_item_attributes($form, $form_state) {
+
+
+    $form['width'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Column size'),
+        '#description' => t('Portion size for this column. Note all column widths should add up to 1'),
+        '#size' => 15,
+        '#maxlength' => 20,
+        '#states' => array(
+            'visible' => array(
+                ':input[name="shortcode"]' => array('value' => 'columns'),
+            ),
+        ),
+    );
+
+    return $form;
+}
